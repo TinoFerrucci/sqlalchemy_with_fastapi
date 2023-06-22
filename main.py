@@ -59,6 +59,12 @@ def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return items
 
 
+@app.get("/items/{user_id}", response_model=list[schemas.Item])
+def read_items_by_user_id(user_id: int, db: Session = Depends(get_db)):
+    items = crud.get_item_by_user_id(db, user_id)
+    return items
+
+
 @app.put("/items/{item_id}", response_model=schemas.Item)
 def update_item(item_id: int, item: schemas.ItemModify, db: Session = Depends(get_db)):
     db_item = crud.modify_item(db, item, item_id)
@@ -67,7 +73,7 @@ def update_item(item_id: int, item: schemas.ItemModify, db: Session = Depends(ge
     return db_item
 
 
-@app.put("/users/{item_id}", response_model=schemas.User)
+@app.put("/users/{user_id}", response_model=schemas.User)
 def update_user(user_id: int, user: schemas.UserBase, db: Session = Depends(get_db)):
     db_user = crud.modify_user(db, user, user_id)
     if db_user is None:

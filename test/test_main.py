@@ -49,6 +49,16 @@ def test_user_already_created():
             }
 
 
+def test_delete_user():
+    user_id = len(client.get('/users').json())
+    response = client.delete(f"/users/{user_id}")
+
+    assert response.status_code == 201
+    assert response.json() == {
+          "message": "User deleted"
+    }
+
+
 def test_item_create():
     user_id = 2
     title = ""
@@ -72,7 +82,7 @@ def test_item_create():
     }
 
 
-def get_user_by_id():
+def test_get_user_by_id():
     user_id = 1
 
     response = client.get(f"/users/{user_id}")
@@ -99,7 +109,7 @@ def get_user_by_id():
         }
 
 
-def get_user_by_id_non_existent():
+def test_get_user_by_id_non_existent():
     user_id = -1
 
     response = client.get(f"/users/{user_id}")
@@ -107,4 +117,57 @@ def get_user_by_id_non_existent():
     assert response.status_code == 404
     assert response.json() == {
         "detail": "User not found"
+    }
+
+
+def test_get_items_by_user_id():
+    user_id = 1
+
+    response = client.get(f"/items/{user_id}")
+
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "title": "Coca Cola",
+            "description": "Botella de coca cola",
+            "id": 1,
+            "owner_id": 1
+        },
+        {
+            "title": "Manaos",
+            "description": "Manaos de ciruela",
+            "id": 2,
+            "owner_id": 1
+        }
+    ]
+
+
+def test_get_items_by_user_id_non_existent():
+    user_id = -1
+
+    response = client.get(f"/items/{user_id}")
+
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_delete_item():
+    item_id = len(client.get(f"/items").json())
+
+    response = client.delete(f"/items/{item_id}")
+
+    assert response.status_code == 201
+    assert response.json() == {
+        "message": "Item deleted"
+    }
+
+
+def test_delete_item_not_exist():
+    item_id = -1
+
+    response = client.delete(f"/items/{item_id}")
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "Item not found"
     }
