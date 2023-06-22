@@ -81,7 +81,7 @@ def update_user(user_id: int, user: schemas.UserBase, db: Session = Depends(get_
     return db_user
 
 
-@app.delete("/users/{user_id}", response_model=schemas.User)
+@app.delete("/users/{user_id}")
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     user_deleted = crud.remove_user(db, user_id)
     if not user_deleted:
@@ -89,9 +89,17 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     return JSONResponse(status_code=status.HTTP_201_CREATED, content={"message": "User deleted"})
 
 
-@app.delete("/items/{item_id}", response_model=schemas.User)
+@app.delete("/items/{item_id}")
 def delete_user(item_id: int, db: Session = Depends(get_db)):
     item_deleted = crud.remove_item(db, item_id)
     if not item_deleted:
         raise HTTPException(status_code=404, detail="Item not found")
     return JSONResponse(status_code=status.HTTP_201_CREATED, content={"message": "Item deleted"})
+
+
+@app.post('/login')
+def login(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    login = crud.login(db, user)
+    if not login:
+        raise HTTPException(status_code=404, detail="Invalid credentials")
+    return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content={"message": "User successfully logged"})

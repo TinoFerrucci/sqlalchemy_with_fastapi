@@ -73,3 +73,11 @@ def remove_item(db: Session, item_id: int):
     item.delete()
     db.commit()
     return True
+
+
+def login(db: Session, user: schemas.UserCreate):
+    user.password = user.password + "notreallyhashed"
+    userDB = db.query(models.User).filter(models.User.email == user.email).first()
+    if not userDB or user.password != userDB.hashed_password:
+        return False
+    return True

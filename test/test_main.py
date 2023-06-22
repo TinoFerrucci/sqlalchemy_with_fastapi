@@ -171,3 +171,39 @@ def test_delete_item_not_exist():
     assert response.json() == {
         "detail": "Item not found"
     }
+
+
+def test_user_login_wrong_password():
+    email = "constantino@wiener-lab.com"
+    password = "some_wrong_password"
+
+    response = client.post(
+        "/login",
+        json={
+            "email": email,
+            "password": password,
+        },
+    )
+
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "Invalid credentials"
+    }
+
+
+def test_user_login_good_password():
+    email = "constantino@wiener-lab.com"
+    password = "123456"
+
+    response = client.post(
+        "/login",
+        json={
+            "email": email,
+            "password": password,
+        },
+    )
+
+    assert response.status_code == 202
+    assert response.json() == {
+        "message": "User successfully logged"
+    }
